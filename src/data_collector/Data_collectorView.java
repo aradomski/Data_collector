@@ -19,6 +19,7 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 /**
@@ -127,6 +128,10 @@ public class Data_collectorView extends FrameView {
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
+        jd_result = new javax.swing.JDialog();
+        jb_resultClose = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jtp_report = new javax.swing.JTextPane();
 
         mainPanel.setName("mainPanel"); // NOI18N
 
@@ -195,16 +200,11 @@ public class Data_collectorView extends FrameView {
                 .addComponent(jtf_error, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1)))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
                 .addGap(7, 7, 7)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
@@ -264,6 +264,47 @@ public class Data_collectorView extends FrameView {
 
         menuBar.add(helpMenu);
 
+        jd_result.setMinimumSize(new java.awt.Dimension(313, 214));
+        jd_result.setName("jd_result"); // NOI18N
+
+        jb_resultClose.setText(resourceMap.getString("jb_resultClose.text")); // NOI18N
+        jb_resultClose.setName("jb_resultClose"); // NOI18N
+        jb_resultClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_resultCloseActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        jtp_report.setEditable(false);
+        jtp_report.setName("jtp_report"); // NOI18N
+        jScrollPane2.setViewportView(jtp_report);
+
+        javax.swing.GroupLayout jd_resultLayout = new javax.swing.GroupLayout(jd_result.getContentPane());
+        jd_result.getContentPane().setLayout(jd_resultLayout);
+        jd_resultLayout.setHorizontalGroup(
+            jd_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jd_resultLayout.createSequentialGroup()
+                .addGroup(jd_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jd_resultLayout.createSequentialGroup()
+                        .addGap(110, 110, 110)
+                        .addComponent(jb_resultClose, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jd_resultLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jd_resultLayout.setVerticalGroup(
+            jd_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jd_resultLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jb_resultClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         setComponent(mainPanel);
         setMenuBar(menuBar);
     }// </editor-fold>//GEN-END:initComponents
@@ -281,7 +322,7 @@ public class Data_collectorView extends FrameView {
     }//GEN-LAST:event_jtp_passwordFocusGained
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+        Integer[] response = new Integer[4];
         // TODO add your handling code here:
         //  System.out.println(jtp_password.getPassword());
         NumberMatch numberMatch = new NumberMatch();
@@ -292,15 +333,23 @@ public class Data_collectorView extends FrameView {
             Logger.getLogger(Data_collectorView.class.getName()).log(Level.SEVERE, null, ex);
         }
         char [] pass = jtp_password.getPassword();
-
+//        networkOperator = TMOBILE;
+        
         switch (networkOperator){
             case TMOBILE: try {
                 System.out.println("T-mobile/Era");
-                Tmobile_sender tmobileSender = new Tmobile_sender(jtf_login.getText(), pass, jtf_recieverNumber.getText(), jcb_sponsored.isSelected(), jta_message.getText(), false, failURL, successURL);
-
+                Tmobile_sender tmobileSender = new Tmobile_sender();
+                        response =tmobileSender.send(jtf_login.getText(), pass, jtf_recieverNumber.getText(), jcb_sponsored.isSelected(), jta_message.getText(), false, failURL, successURL);
+                for (Integer k: response){
+                    //System.out.println("response D = "+k);
+                }    
             } catch (IOException ex) {
                 Logger.getLogger(Data_collectorView.class.getName()).log(Level.SEVERE, null, ex);
             }
+            TMobileReportCreator tMobileReport = new TMobileReportCreator(response);
+              jd_result.setVisible(true);   
+              jb_resultClose.setText("Ok");
+             jtp_report.setText(tMobileReport.toString());
             break;
             case ERROR: System.out.println("Błąd wyszukiwania operatora");
             jtf_error.setText("Błąd wyszukiwania operatora");
@@ -311,18 +360,26 @@ public class Data_collectorView extends FrameView {
         }
 }//GEN-LAST:event_jButton1ActionPerformed
 
+private void jb_resultCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_resultCloseActionPerformed
+ jd_result.setVisible(false);
+}//GEN-LAST:event_jb_resultCloseActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton jb_resultClose;
     private javax.swing.JCheckBox jcb_sponsored;
+    private javax.swing.JDialog jd_result;
     private javax.swing.JTextArea jta_message;
     private javax.swing.JTextField jtf_error;
     private javax.swing.JTextField jtf_login;
     private javax.swing.JTextField jtf_recieverNumber;
     private javax.swing.JPasswordField jtp_password;
+    private javax.swing.JTextPane jtp_report;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables

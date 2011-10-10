@@ -31,7 +31,8 @@ public class Tmobile_sender {
 	public boolean mms;
 	public String sucess;
 	public String faliure;
-        private int[] response =new int[4];
+        //private String[] response =new String[4];
+        private Integer[] response = new Integer[4];
 	/**
 	 * @param login
 	 * @param password
@@ -42,10 +43,10 @@ public class Tmobile_sender {
 	 * @param sucess
 	 * @param faliure
 	 */
-	public  Tmobile_sender(String login, char[] password,
+        public Tmobile_sender(){}
+	public Integer[] send(String login, char[] password,
 			String reciever_number, boolean sponsored, String message,
 			boolean mms, String sucess, String faliure) throws IOException {
-		super();
 		this.login = login;
 		this.password = password;
 		this.reciever_number = reciever_number;
@@ -54,8 +55,7 @@ public class Tmobile_sender {
 		this.mms = mms;
 		this.sucess = sucess;
 		this.faliure = faliure;              
-		// System.out.println(password);
-
+                int j=0;
 		String params = "message=" + this.message + "&number="
 				+ this.reciever_number + "&password=";
 		for (int i = 0; i < password.length; i++) {
@@ -76,8 +76,10 @@ public class Tmobile_sender {
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						urlConnection.getInputStream()));
 				 String inputLine;
-				 while ((inputLine = in.readLine()) != null){                            
-				 System.out.println(inputLine);
+				 while ((inputLine = in.readLine()) != null){ 
+                                 response[j]=Integer.parseInt(inputLine);
+				// System.out.println("inputLine ="+inputLine);
+                                 j++;
                                  }
 				in.close();
 
@@ -98,7 +100,9 @@ public class Tmobile_sender {
 						urlConnection.getInputStream()));
 				 String inputLine;
 				 while ((inputLine = in.readLine()) != null){
-                                 System.out.println(inputLine);                               
+                                 response[j]=Integer.parseInt(inputLine);
+                                 //System.out.println(inputLine);    
+                                 j++;
                                  }
 				
 				in.close();
@@ -107,6 +111,10 @@ public class Tmobile_sender {
 				Logger.getLogger(Tmobile_sender.class.getName()).log(
 						Level.SEVERE, null, ex);
 			}
-		}             
+		}                     
+//                for (Integer k: response){
+//                    System.out.println("response = "+k);
+//                }
+                return response;
 	}
 }
