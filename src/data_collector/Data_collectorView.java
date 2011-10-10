@@ -340,9 +340,9 @@ public class Data_collectorView extends FrameView {
                 System.out.println("T-mobile/Era");
                 Tmobile_sender tmobileSender = new Tmobile_sender();
                         response =tmobileSender.send(jtf_login.getText(), pass, jtf_recieverNumber.getText(), jcb_sponsored.isSelected(), jta_message.getText(), false, failURL, successURL);
-                for (Integer k: response){
+               // for (Integer k: response){
                     //System.out.println("response D = "+k);
-                }    
+               // }    
             } catch (IOException ex) {
                 Logger.getLogger(Data_collectorView.class.getName()).log(Level.SEVERE, null, ex);
             }
